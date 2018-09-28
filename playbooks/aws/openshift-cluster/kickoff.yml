@@ -1,7 +1,10 @@
 ---
-- hosts: localhost
-  connection: local
+- name: Wasting time
+  hosts: localhost
   gather_facts: no
   tasks:
-  - name: kickoff a full deployment
-    import_playbook: provision_install.yml
+  - name: Do a message
+    debug:
+      msg: "Kicking off deployment"
+
+- import_playbook: provision_install.yml
