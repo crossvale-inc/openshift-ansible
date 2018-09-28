@@ -1,0 +1,42 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+
+[OSEv3:vars]
+################################################################################
+# Ensure these variables are set for bootstrap
+################################################################################
+# openshift_deployment_type is required for installation
+openshift_deployment_type=openshift-enterprise
+
+# Cloud Provider Configuration
+#
+# Note: You may make use of environment variables rather than store
+# sensitive configuration within the ansible inventory.
+# For example:
+openshift_cloudprovider_aws_access_key="{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+openshift_cloudprovider_aws_secret_key="{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+#
+# AWS
+openshift_cloudprovider_kind=aws
+# Note: IAM profiles may be used instead of storing API credentials on disk.
+# openshift_cloudprovider_aws_access_key=aws_access_key_id
+# openshift_cloudprovider_aws_secret_key=aws_secret_access_key
+
+openshift_master_bootstrap_enabled=True
+openshift_master_api_port=443
+
+openshift_hosted_router_wait=False
+openshift_hosted_registry_wait=False
+
+#ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_become=True
+################################################################################
+# cluster specific settings maybe be placed here
+
+[masters]
+
+[etcd]
+
+[nodes]

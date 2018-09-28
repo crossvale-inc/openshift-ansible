@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: kickoff a full deployment
+    import_playbook: provision_install.yml
