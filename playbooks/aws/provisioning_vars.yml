@@ -19,7 +19,7 @@ openshift_deployment_type: 'openshift-enterprise'
 openshift_release: "3.9"
 
 # This will be dependent on the version provided by the yum repository
-openshift_pkg_version: -3.9.14
+openshift_pkg_version: -3.9.41
 
 # OpenShift api port
 # Fulfills a chicken/egg scenario with how Ansible treats host inventory file
