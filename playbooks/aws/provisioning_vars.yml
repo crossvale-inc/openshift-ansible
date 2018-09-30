@@ -156,3 +156,5 @@ openshift_cloudprovider_aws_secret_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY'
 openshift_aws_iam_cert_path: '/Users/bkugler/dev/certificates/server.pem'  # '/path/to/wildcard.<clusterid>.example.com.crt'
 openshift_aws_iam_cert_key_path: '/Users/bkugler/dev/certificates/aws-rsa.key' # '/path/to/wildcard.<clusterid>.example.com.key'
 #openshift_aws_iam_cert_chain_path: '~/dev/certificates/ca.pem' # '/path/to/cert.ca.crt'
+
+template_service_broker_selector: {'type':'infra'}
