@@ -1,0 +1,56 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+
+[OSEv3:vars]
+################################################################################
+# Ensure these variables are set for bootstrap
+################################################################################
+# openshift_deployment_type is required for installation
+openshift_deployment_type=openshift-enterprise
+
+# Cloud Provider Configuration
+#
+# Note: You may make use of environment variables rather than store
+# sensitive configuration within the ansible inventory.
+# For example:
+openshift_cloudprovider_aws_access_key="{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+openshift_cloudprovider_aws_secret_key="{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+#
+# AWS
+openshift_cloudprovider_kind=aws
+# Note: IAM profiles may be used instead of storing API credentials on disk.
+# openshift_cloudprovider_aws_access_key=aws_access_key_id
+# openshift_cloudprovider_aws_secret_key=aws_secret_access_key
+
+openshift_master_bootstrap_enabled=True
+openshift_master_api_port=443
+
+openshift_hosted_router_wait=False
+openshift_hosted_registry_wait=False
+
+#openshift_master_identity_providers=[{'name': 'github', 'challenge': 'false', 'login': 'true', 'kind': 'GitHubIdentityProvider','mapping_method': 'claim', 'clientID': '{{ lookup("env","GH_CLIENT_ID") }}', 'clientSecret': '{{ lookup("env","GH_SECRET_ID") }}', 'organizations': {'['["XvaleOCP"]']'}}]
+# htpasswd Authentication
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_htpasswd_file=/root/htpasswd.openshift
+
+# Enable API service auditing
+openshift_master_audit_config={"enabled": "true"}
+#
+# In case you want more advanced setup for the auditlog you can
+# use this line.
+# The directory in "auditFilePath" will be created if it's not
+# exist
+openshift_master_audit_config={"enabled": "true", "auditFilePath": "/var/lib/origin/openpaas-oscp-audit/openpaas-oscp-audit.log", "maximumFileRetentionDays": "14", "maximumFileSizeMegabytes": "500", "maximumRetainedFiles": "5"}
+
+#ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_become=True
+################################################################################
+# cluster specific settings maybe be placed here
+
+[masters]
+
+[etcd]
+
+[nodes]

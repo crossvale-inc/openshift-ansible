@@ -41,7 +41,7 @@
 
       https://github.com/openshift/openshift-docs/blob/master/install_config/persistent_storage/dynamically_provisioning_pvs.adoc#available-dynamically-provisioned-plug-ins
   when:
-    - openshift_clusterid is not defined
+    - openshift_aws_clusterid is not defined
     - openshift_cloudprovider_kind is defined
     - openshift_cloudprovider_kind == 'aws'
 

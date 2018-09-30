@@ -1,0 +1,10 @@
+---
+- name: Wasting time
+  hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: Do a message
+    debug:
+      msg: "Kicking off deployment"
+
+- import_playbook: provision_install.yml
