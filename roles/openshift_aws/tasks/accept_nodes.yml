@@ -32,6 +32,24 @@
   debug:
     msg: "{{ mastersout.instances[0].public_ip_address }}"
 
+- name: Inject AWS keys for node identification
+  become: True
+  blockinfile:
+    path: /etc/systemd/system/atomic-openshift-node.service.d/override.conf
+    block: |
+      [Service]
+      Environment='AWS_ACCESS_KEY_ID={{ openshift_cloudprovider_aws_access_key }}'
+      Environment='AWS_SECRET_ACCESS_KEY={{ openshift_cloudprovider_aws_secret_key }}'
+    insertafter: EOF
+  delegate_to: "{{ item.public_dns_name }}"
+  with_items: "{{ instancesout.instances }}"
+
+- name: Reload node systemctl daemon
+  become: True
+  shell: systemctl daemon-reload
+  delegate_to: "{{ item.public_dns_name }}"
+  with_items: "{{ instancesout.instances }}"
+
 - name: approve nodes
   oc_adm_csr:
     #approve_all: True
