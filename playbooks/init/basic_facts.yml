@@ -61,7 +61,6 @@
 
 - name: Initialize special first-master variables
   hosts: oo_first_master
-  become: yes
   roles:
   - role: openshift_facts
   tasks:
