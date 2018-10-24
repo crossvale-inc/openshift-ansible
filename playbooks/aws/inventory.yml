@@ -1,0 +1,63 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+
+[OSEv3:vars]
+################################################################################
+# Ensure these variables are set for bootstrap
+################################################################################
+# openshift_deployment_type is required for installation
+openshift_deployment_type=openshift-enterprise
+
+# Cloud Provider Configuration
+#
+# Note: You may make use of environment variables rather than store
+# sensitive configuration within the ansible inventory.
+# For example:
+openshift_cloudprovider_aws_access_key="{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+openshift_cloudprovider_aws_secret_key="{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+
+# AWS
+openshift_cloudprovider_kind=aws
+
+
+openshift_master_bootstrap_enabled=True
+openshift_master_api_port=443
+openshift_master_console_port=443
+
+openshift_hosted_infra_selector="type=infra"
+openshift_hosted_router_selector="type=infra"
+openshift_hosted_registry_selector="type=infra"
+osm_default_node_selector="type=compute"
+template_service_broker_selector="type=infra"
+
+openshift_hosted_router_wait=False
+openshift_hosted_registry_wait=False
+
+openshift_master_cluster_hostname=internal.ohio.crossvale-ocp.com
+openshift_master_cluster_public_hostname=console.ohio.crossvale-ocp.com
+openshift_master_default_subdomain=apps.ohio.crossvale-ocp.com
+openshift_master_overwrite_named_certificates=True
+
+openshift_hosted_router_replicas=2
+
+#openshift_master_identity_providers=[{'name': 'github', 'challenge': 'false', 'login': 'true', 'kind': 'GitHubIdentityProvider','mapping_method': 'claim', 'clientID': '{{ lookup("env","GH_CLIENT_ID") }}', 'clientSecret': '{{ lookup("env","GH_SECRET_ID") }}', 'organizations': {'['["XvaleOCP"]']'}}]
+
+# htpasswd Authentication
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+
+
+#ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+ansible_become=True
+ansible_ssh_user=ec2-user
+
+################################################################################
+# cluster specific settings maybe be placed here
+
+[masters]
+
+[etcd]
+
+[nodes]

@@ -12,7 +12,16 @@
 # Variables in this section affect all areas of the cluster
 
 # Deployment type must be specified.
-openshift_deployment_type: 'openshift-enterprise'
+# openshift_deployment_type: 'openshift-enterprise'
+openshift_aws_clusterid: 'xvocpdev'
+
+# openshift_master_cluster_hostname: 'internal-openshift-master.crossvale-ocp.com'
+# openshift_master_cluster_public_hostname: 'console.dev.crossvale-ocp.com'
+# openshift_master_default_subdomain: 'apps.openshift.crossvale-ocp.com'
+# openshift_metrics_hawkular_hostname: 'metrics.apps.crossvale-ocp.com'
+# openshift_hosted_metrics_public_url: 'https://metrics.apps.dev.crossvale-ocp.com/hawkular/metrics'
+# openshift_logging_kibana_hostname: 'kibana.apps.dev.crossvale-ocp.com'
+# openshift_logging_master_public_url: 'https://console.dev.crossvale-ocp.com'
 
 # openshift_release must be specified.  Use whatever version of openshift
 # that is supported by openshift-ansible that you wish.
@@ -29,7 +38,6 @@ openshift_master_api_port: 443
 
 # specify a clusterid
 # This value is also used as the default value for many other components.
-openshift_aws_clusterid: ocp39
 
 # AWS region
 # This value will instruct the plays where all items should be created.
@@ -58,12 +66,12 @@ openshift_aws_vpc:
       az: "us-east-2c"
       default_az: true
     - cidr: 172.31.32.0/20
-      az: "us-east-2c"
+      az: "us-east-2b"
     - cidr: 172.31.16.0/20
       az: "us-east-2a"
 
 # Name of the vpc.  Needs to be set if using a pre-existing vpc.
-#openshift_aws_vpc_name: "{{ openshift_aws_clusterid }}"
+openshift_aws_vpc_name: "{{ openshift_aws_clusterid }}"
 
 # Name of the subnet in the vpc to use.  Needs to be set if using a pre-existing
 # vpc + subnet. Otherwise will use the subnet with 'default_az' set (see above
@@ -109,7 +117,8 @@ openshift_aws_ssh_key_name: ocp39cluster
 
 # When building the AMI, specify the user to ssh to the instance as.
 openshift_aws_build_ami_ssh_user: ec2-user
-ansible_ssh_user: ec2-user
+#ansible_ssh_user: ec2-user
+
 # --------- #
 # AMI Build #
 # --------- #
@@ -125,7 +134,7 @@ container_runtime_docker_storage_setup_device: /dev/xvdb
 openshift_aws_base_ami: ami-03291866
 
 # specify the ami built during the build phase
-openshift_aws_ami: ami-03d6f55da77c58b07
+openshift_aws_ami: ami-0b6f457940532cd6d
 
 # Cloud Provider Configuration
 #
@@ -150,11 +159,11 @@ openshift_cloudprovider_aws_secret_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY'
 # --- #
 
 # openshift_aws_elb_name will be the base-name of the ELBs.
-#openshift_aws_elb_name: "{{ openshift_aws_clusterid }}"
+openshift_aws_elb_name: "{{ openshift_aws_clusterid }}"
 
 # custom certificates are required for the ELB
-openshift_aws_iam_cert_path: '/Users/bkugler/dev/certificates/server.pem'  # '/path/to/wildcard.<clusterid>.example.com.crt'
-openshift_aws_iam_cert_key_path: '/Users/bkugler/dev/certificates/aws-rsa.key' # '/path/to/wildcard.<clusterid>.example.com.key'
+openshift_aws_iam_cert_path: '/var/lib/awx/certs/awsserver.pem'  # '/path/to/wildcard.<clusterid>.example.com.crt'
+openshift_aws_iam_cert_key_path: '/var/lib/awx/certs/awsxvdev_rsa.key' # '/path/to/wildcard.<clusterid>.example.com.key'
 #openshift_aws_iam_cert_chain_path: '~/dev/certificates/ca.pem' # '/path/to/cert.ca.crt'
 
-template_service_broker_selector: {'type':'infra'}
+# ansible_ssh_private_key_file: '/Users/bkugler/.ssh/ocp39cluster'
