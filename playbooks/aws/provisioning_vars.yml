@@ -117,7 +117,7 @@ openshift_aws_ssh_key_name: ocp39cluster
 
 # When building the AMI, specify the user to ssh to the instance as.
 openshift_aws_build_ami_ssh_user: ec2-user
-#ansible_ssh_user: ec2-user
+ansible_ssh_user: ec2-user
 
 # --------- #
 # AMI Build #
