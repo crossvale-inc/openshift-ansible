@@ -12,7 +12,7 @@
 # Variables in this section affect all areas of the cluster
 
 # Deployment type must be specified.
-# openshift_deployment_type: 'openshift-enterprise'
+openshift_deployment_type: 'openshift-enterprise'
 openshift_aws_clusterid: 'xvocpdev'
 
 # openshift_master_cluster_hostname: 'internal-openshift-master.crossvale-ocp.com'
