@@ -35,9 +35,9 @@ template_service_broker_selector="type=infra"
 openshift_hosted_router_wait=False
 openshift_hosted_registry_wait=False
 
-openshift_master_cluster_hostname=internal.ohio.crossvale-ocp.com
-openshift_master_cluster_public_hostname=console.ohio.crossvale-ocp.com
-openshift_master_default_subdomain=apps.ohio.crossvale-ocp.com
+#openshift_master_cluster_hostname=internal.ohio.crossvale-ocp.com
+#openshift_master_cluster_public_hostname=console.ohio.crossvale-ocp.com
+#openshift_master_default_subdomain=apps.ohio.crossvale-ocp.com
 openshift_master_overwrite_named_certificates=True
 
 openshift_hosted_router_replicas=2

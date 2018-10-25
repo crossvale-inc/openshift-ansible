@@ -166,4 +166,5 @@ openshift_aws_iam_cert_path: '/var/lib/awx/certs/awsserver.pem'  # '/path/to/wil
 openshift_aws_iam_cert_key_path: '/var/lib/awx/certs/awsxvdev_rsa.key' # '/path/to/wildcard.<clusterid>.example.com.key'
 #openshift_aws_iam_cert_chain_path: '~/dev/certificates/ca.pem' # '/path/to/cert.ca.crt'
 
-# ansible_ssh_private_key_file: '/Users/bkugler/.ssh/ocp39cluster'
+# This has to be here for some reason, all the others are in the inventory file
+template_service_broker_selector: {'type':'infra'}
