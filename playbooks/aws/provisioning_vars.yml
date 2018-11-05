@@ -15,9 +15,9 @@
 openshift_deployment_type: 'openshift-enterprise'
 openshift_aws_clusterid: 'xvocpdev'
 
-# openshift_master_cluster_hostname: 'internal-openshift-master.crossvale-ocp.com'
-# openshift_master_cluster_public_hostname: 'console.dev.crossvale-ocp.com'
-# openshift_master_default_subdomain: 'apps.openshift.crossvale-ocp.com'
+openshift_master_cluster_hostname: 'internal-masters.dev.crossvale-ocp.com'
+openshift_master_cluster_public_hostname: 'console.dev.crossvale-ocp.com'
+openshift_master_default_subdomain: 'apps.dev.crossvale-ocp.com'
 # openshift_metrics_hawkular_hostname: 'metrics.apps.crossvale-ocp.com'
 # openshift_hosted_metrics_public_url: 'https://metrics.apps.dev.crossvale-ocp.com/hawkular/metrics'
 # openshift_logging_kibana_hostname: 'kibana.apps.dev.crossvale-ocp.com'
