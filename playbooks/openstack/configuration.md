@@ -18,6 +18,7 @@ Environment variables may also be used.
 * [DNS Configuration](#dns-configuration)
 * [Floating IP Address Configuration](#floating-ip-address-configuration)
 * [All-in-one Deployment Configuration](#all-in-one-deployment-configuration)
+* [Separate etcd Deployment Configuration](#separate-etcd-deployment-configuration)
 * [Building Node Images](#building-node-images)
 * [Kuryr Networking Configuration](#kuryr-networking-configuration)
 * [Provider Network Configuration](#provider-network-configuration)
@@ -38,10 +39,12 @@ In `inventory/group_vars/all.yml`:
 * `openshift_openstack_keypair_name` OpenStack keypair to use.
 * Role Node Counts
   * `openshift_openstack_num_masters` Number of master nodes to create.
+  * `openshift_openstack_num_etcd` Number of etcd nodes to create (0 if co-hosted on master hosts).
   * `openshift_openstack_num_infra` Number of infra nodes to create.
   * `openshift_openstack_num_nodes` Number of app nodes to create.
 * Role Node Floating IP Allocation
   * `openshift_openstack_master_floating_ip` Assign floating IP to master nodes. Defaults to `True`.
+  * `openshift_openstack_etcd_floating_ip` Assign floating IP to etcd nodes (if any). Defaults to `True`.
   * `openshift_openstack_infra_floating_ip` Assign floating IP to infra nodes. Defaults to `True`.
   * `openshift_openstack_compute_floating_ip` Assign floating IP to app nodes. Defaults to `True`.
 * Role Images
@@ -505,6 +508,7 @@ First, set the node counts and labels like so in
 
 ```
 openshift_openstack_num_masters: 1
+openshift_openstack_num_etcd: 0
 openshift_openstack_num_infra: 0
 openshift_openstack_num_nodes: 0
 
@@ -531,6 +535,28 @@ this new group to it.
 
 Note that the "all in one" node must be the "master". openshift-ansible
 expects at least one node in the `masters` Ansible group.
+
+
+## Separate etcd Deployment Configuration
+
+If you want to deploy OpenShift Container Platform with the etcd running on separate hosts
+appart from the master hosts, the following changes need to be made to the inventory:
+
+Single master and single etcd host:
+```
+ :
+openshift_openstack_num_masters: 1
+openshift_openstack_num_etcd: 1
+ :
+```
+
+Multiple master and multiple etcd hosts:
+```
+ :
+openshift_openstack_num_masters: 3
+openshift_openstack_num_etcd: 3
+ :
+```
 
 
 ## Building Node Images
@@ -633,6 +659,18 @@ to the UUID of the public subnet in your OpenStack.
 **NOTE**: A lot of OpenStack deployments do not make the public subnet
 accessible to regular users.
 
+To customize the images used by kuryr pods, set the following variables:
+
+```
+# OKD
+openshift_openstack_kuryr_controller_image: kuryr/controller:latest
+openshift_openstack_kuryr_cni_image: kuryr/cni:latest
+
+# OCP
+#openshift_openstack_kuryr_cni_image:  registry.redhat.io/rhosp13/openstack-kuryr-cni:13.0
+#openshift_openstack_kuryr_controller_image: registry.redhat.io/rhosp13/openstack-kuryr-controller:13.0
+```
+
 Finally, you *must* set up an OpenStack cloud provider as specified in
  [OpenStack Cloud Provider Configuration](#openstack-cloud-provider-configuration).
 
@@ -691,6 +729,7 @@ openshift_node_groups:
   - name: node-config-master
     labels:
       - 'node-role.kubernetes.io/master=true'
+      - 'pod_vif=nested-vlan'
     edits: []
   - name: node-config-infra
     labels:
@@ -732,6 +771,11 @@ enable_kuryr_controller_probes: True
 enable_kuryr_cni_probes: True
 ```
 
+**NOTE:** If using OSP13 container images for kuryr-cni (registry.redhat.io/rhosp13/openstack-kuryr-cni:13.0), it is required to disable the cni probes as:
+
+```yaml
+enable_kuryr_cni_probes: True
+```
 
 ## API and Router Load Balancing
 
@@ -763,6 +807,12 @@ This playbook defaults to using OpenStack Octavia as its LBaaSv2 provider:
 If your cloud uses the deprecated Neutron LBaaSv2 provider set:
 
     openshift_openstack_lbaasv2_provider: "Neutron::LBaaS"
+
+The Octavia listeners connection timeout associated to the API can be modified
+by setting the next variable in miliseconds (default value 500000):
+
+    openshift_openstack_api_lb_listeners_timeout: 500000
+
 
 ### VM-based Load Balancer
 
@@ -917,6 +967,7 @@ In order to do so, set the following in `inventory/group_vars/OSEv3.yml`:
 * `openshift_hosted_registry_storage_swift_tenantid`: "{{ lookup('env','OS_PROJECT_ID') }}" _# can also specify tenant_
 * `openshift_hosted_registry_storage_swift_domain`: "{{ lookup('env','OS_USER_DOMAIN_NAME') }}" _# optional; can also specifiy domainid_
 * `openshift_hosted_registry_storage_swift_domainid`: "{{ lookup('env','OS_USER_DOMAIN_ID') }}" _# optional; can also specifiy domain_
+* `openshift_hosted_registry_storage_swift_insecureskipverify`: "false" # optional; true to skip TLS verification
 
 Note that the exact environment variable names may vary depending on the contents of
 your OpenStack RC file. If you use Keystone v2, you may not need to set all of these

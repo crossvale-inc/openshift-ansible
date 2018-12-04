@@ -38,6 +38,8 @@ objects:
           image: ${IMAGE_NAME}
           imagePullPolicy: IfNotPresent
           env:
+          - name: GLUSTER_BLOCKD_STATUS_PROBE_ENABLE
+            value: "${GLUSTER_BLOCKD_STATUS_PROBE_ENABLE}"
           - name: GB_GLFS_LRU_COUNT
             value: "${GB_GLFS_LRU_COUNT}"
           - name: TCMU_LOGDIR
@@ -61,8 +63,8 @@ objects:
             mountPath: "/var/log/glusterfs"
           - name: glusterfs-config
             mountPath: "/var/lib/glusterd"
-          - name: glusterfs-dev
-            mountPath: "/dev"
+          - name: glusterfs-dev-disk
+            mountPath: "/dev/disk"
           - name: glusterfs-misc
             mountPath: "/var/lib/misc/glusterfsd"
           - name: glusterfs-cgroup
@@ -86,7 +88,7 @@ objects:
               command:
               - "/bin/bash"
               - "-c"
-              - systemctl status glusterd.service
+              - "if command -v /usr/local/bin/status-probe.sh; then /usr/local/bin/status-probe.sh readiness; else systemctl status glusterd.service; fi"
             periodSeconds: 25
             successThreshold: 1
             failureThreshold: 50
@@ -97,7 +99,7 @@ objects:
               command:
               - "/bin/bash"
               - "-c"
-              - systemctl status glusterd.service
+              - "if command -v /usr/local/bin/status-probe.sh; then /usr/local/bin/status-probe.sh liveness; else systemctl status glusterd.service; fi"
             periodSeconds: 25
             successThreshold: 1
             failureThreshold: 50
@@ -120,9 +122,9 @@ objects:
         - name: glusterfs-config
           hostPath:
             path: "/var/lib/glusterd"
-        - name: glusterfs-dev
+        - name: glusterfs-dev-disk
           hostPath:
-            path: "/dev"
+            path: "/dev/disk"
         - name: glusterfs-misc
           hostPath:
             path: "/var/lib/misc/glusterfsd"
@@ -147,6 +149,11 @@ parameters:
   displayName: Daemonset Node Labels
   description: Labels which define the daemonset node selector. Must contain at least one label of the format \'glusterfs=<CLUSTER_NAME>-host\'
   value: '{ "glusterfs": "storage-host" }'
+- name: GLUSTER_BLOCKD_STATUS_PROBE_ENABLE
+  displayName: Enable readiness/liveness probe for gluster-blockd
+  description: Setting the value to "1" enables the readiness/liveness probe for gluster-blockd.
+  value: "1"
+  required: false
 - name: IMAGE_NAME
   displayName: GlusterFS container image name
   required: True
