@@ -28,7 +28,7 @@ openshift_master_default_subdomain: 'apps.dev.crossvale-ocp.com'
 openshift_release: "3.9"
 
 # This will be dependent on the version provided by the yum repository
-openshift_pkg_version: -3.9.41
+openshift_pkg_version: -3.9.60
 
 # OpenShift api port
 # Fulfills a chicken/egg scenario with how Ansible treats host inventory file
@@ -131,7 +131,7 @@ container_runtime_docker_storage_type: overlay2
 container_runtime_docker_storage_setup_device: /dev/xvdb
 
 # must specify a base_ami when building an AMI
-openshift_aws_base_ami: ami-03291866
+openshift_aws_base_ami: ami-0b500ef59d8335eee
 
 # specify the ami built during the build phase
 openshift_aws_ami: ami-0b6f457940532cd6d
