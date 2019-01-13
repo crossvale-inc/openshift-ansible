@@ -134,7 +134,10 @@ container_runtime_docker_storage_setup_device: /dev/xvdb
 openshift_aws_base_ami: ami-0b500ef59d8335eee
 
 # specify the ami built during the build phase
-openshift_aws_ami: ami-0b6f457940532cd6d
+# OCP 3.9.41 
+#openshift_aws_ami: ami-0b6f457940532cd6d
+# OCP 3.9.60
+openshift_aws_ami: ami-0e0a26cd98e20de6e
 
 # Cloud Provider Configuration
 #
