@@ -14,6 +14,7 @@ rules:
       - namespaces
       - networkpolicies
       - nodes
+      - serviceaccounts
     verbs:
       - watch
       - list
@@ -49,9 +50,22 @@ rules:
   - apiGroups: [""]
     resources:
       - pods
+      - namespaces
       - nodes
     verbs:
       - get
+  - apiGroups: [""]
+    resources:
+      - endpoints
+      - services
+    verbs:
+      - watch
+      - list
+  - apiGroups: [""]
+    resources:
+      - nodes/status
+    verbs:
+      - patch
 
 ---
 
@@ -339,13 +353,24 @@ spec:
             httpGet:
               path: /liveness
               port: 9099
+{% if calico_binary_checks %}
+              host: localhost
+{% endif %}
             periodSeconds: 10
             initialDelaySeconds: 10
             failureThreshold: 6
           readinessProbe:
+{% if calico_binary_checks %}
+            exec:
+              command:
+              - /bin/calico-node
+              - -bird-ready
+              - -felix-ready
+{% else %}
             httpGet:
               path: /readiness
               port: 9099
+{% endif %}
             periodSeconds: 10
           volumeMounts:
             - mountPath: /lib/modules

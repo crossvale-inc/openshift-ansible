@@ -9,7 +9,7 @@
 %global __requires_exclude ^/usr/bin/ansible-playbook$
 
 Name:           openshift-ansible
-Version:        3.9.45
+Version:        3.9.64
 Release:        1%{?dist}
 Summary:        Openshift and Atomic Enterprise Ansible
 License:        ASL 2.0
@@ -30,6 +30,7 @@ Requires:      libselinux-python
 Requires:      python-passlib
 Requires:      python2-crypto
 Requires:      patch
+Requires:      pyOpenSSL
 
 %description
 Openshift and Atomic Enterprise Ansible
@@ -202,6 +203,110 @@ Atomic OpenShift Utilities includes
 
 
 %changelog
+* Sat Jan 05 2019 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.64-1
+- 
+
+* Sat Dec 29 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.63-1
+- 
+
+* Sat Dec 22 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.62-1
+- 
+
+* Wed Dec 19 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.61-1
+- 
+
+* Tue Dec 18 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.60-1
+- 
+
+* Sat Dec 15 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.59-1
+- Update Calico RBAC (mleung975@gmail.com)
+- Add better handling for Calico versions (mleung975@gmail.com)
+
+* Sat Dec 08 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.58-1
+- Install boto3 from pip (roignac@gmail.com)
+- fix of https://bugzilla.redhat.com/show_bug.cgi\?id\=1655643
+  (vwalek@vwalek.usersys.redhat.com)
+- hostname is configured as local-ipv4 (bysnupy@hotmail.com)
+
+* Sat Dec 01 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.57-1
+- 
+
+* Fri Nov 30 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.56-1
+- Remove unnecessary passlib check (sdodson@redhat.com)
+- Supply namespace when generating hawkular role binding (jmartisk@redhat.com)
+- Add network-project-id value for kubernetes config for GCP (tti@netzmarkt.de)
+- Add proper liveness and readiness checks for Calico 3.2 (mleung975@gmail.com)
+
+* Wed Nov 28 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.55-1
+- Fixed wrong path to role in node scaleup playbook (felix.flohr@nttdata.com)
+- Add pyOpenSSL openshift-ansible dep (sdodson@redhat.com)
+- Add support for secret encryption (iacopo.rozzo@amadeus.com)
+
+* Sat Nov 24 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.54-1
+- Check both service catalog and install vars (ruju@itu.dk)
+- Update openshift_facts version logic for release-3.9 (rteague@redhat.com)
+
+* Sat Nov 17 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.53-1
+- 
+
+* Sat Nov 17 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.52-1
+- Allow failure when copying kubeconfig to user home dir. (pdd@redhat.com)
+
+* Fri Nov 09 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.51-1
+- openshift_prometheus: ignore router endpoint in kube service config
+  (pgier@redhat.com)
+- Removing openshift_disable_swap (rteague@redhat.com)
+- Add permissions for the Calico CNI plugin to access namespaces
+  (mleung975@gmail.com)
+- Updating clean up task to match become of creation task (ewolinet@redhat.com)
+- Walk the node_output for undefined (sdodson@redhat.com)
+
+* Sat Nov 03 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.50-1
+- 
+
+* Sat Oct 27 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.49-1
+- Update oc_group.py in src (camabeh@gmail.com)
+- Update tests (camabeh@gmail.com)
+- Fix oc group get (camabeh@gmail.com)
+- roles/openshift-prometheus: fix failing prometheus service discovery scrapes
+  (pgier@redhat.com)
+- Pass admin kubeconfig (sdodson@redhat.com)
+
+* Sat Oct 20 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.48-1
+- Use first_master_client_binary from hostvars[groups.oo_first_master.0]
+  (nakayamakenjiro@gmail.com)
+- Remove empty function set_container_facts_if_unset. (pdd@redhat.com)
+- Use openshift_cli_image to find version in openshift_facts when
+  containerized. (pdd@redhat.com)
+- fix trailing spaces and blank lines (fgrosjean@redhat.com)
+- move tuned role from post_control_plane.yml to an additional task in
+  upgrade.yml (fgrosjean@redhat.com)
+- move tuned role from a separated play to a post task in upgrade_nodes.yml
+  (fgrosjean@redhat.com)
+- Update Fuse templates with 7.1 release (antonin@stefanutti.fr)
+- re-apply tuned profile dunring upgrade (fgrosjean@redhat.com)
+
+* Sun Oct 14 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.47-1
+- Override ovsdb-server systemd unit timeout when upgrading. (pdd@redhat.com)
+- Override ovsdb-server systemd unit timeout when upgrading. (pdd@redhat.com)
+- Bug 1554293 - logging-eventrouter event not formatted correctly in
+  Elasticsearch when using MUX (nhosoi@redhat.com)
+- Add 3 retries around all image stream create/replace (sdodson@redhat.com)
+- hosts.example: document openshift_hosted_infra_selector and TSB selector
+  (vrutkovs@redhat.com)
+
+* Wed Oct 03 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.46-1
+- Update the role to use the correct oc path (farandac@redhat.com)
+- Retry storage migrations (sdodson@redhat.com)
+- openshift_prometheus: don't try to install node exporter when uninstalling
+  prom (pgier@redhat.com)
+- Update Web Console customizations variables (gabisoft@freesurf.ch)
+- GlusterFS: Fix heketi URL in StorageClasses (jarrpa@redhat.com)
+- Ensure master facts are set during node scale-up (rteague@redhat.com)
+- Reverted includeAll and multi to true (mattiam7@gmail.com)
+- Using node_boot_time_seconds (mmascia@redhat.com)
+- node_boot_time metric not available anymore (mmascia@redhat.com)
+
 * Tue Sep 18 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.9.45-1
 - Upgrade router and registry only when these are managed (vrutkovs@redhat.com)
 
