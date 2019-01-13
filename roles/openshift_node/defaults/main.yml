@@ -63,13 +63,8 @@ default_r_openshift_node_image_prep_packages:
 - glusterfs-fuse
 - device-mapper-multipath
 - nfs-utils
-- cockpit-ws
-- cockpit-system
-- cockpit-bridge
-- cockpit-docker
 - iscsi-initiator-utils
 - ceph-common
-- atomic
 r_openshift_node_image_prep_packages: "{{ default_r_openshift_node_image_prep_packages | union(openshift_node_image_prep_packages | default([])) }}"
 
 r_openshift_node_os_firewall_deny: []
@@ -101,7 +96,6 @@ r_openshift_node_os_firewall_allow: "{{ default_r_openshift_node_os_firewall_all
 
 # oreg_url is defined by user input
 oreg_auth_credentials_path: "{{ openshift_node_data_dir }}/.docker"
-l_bind_docker_reg_auth: False
 
 openshift_docker_service_name: "docker"
 

@@ -19,6 +19,8 @@ except ImportError:
 from keystoneauth1.exceptions.catalog import EndpointNotFound
 import shade
 
+OPENSHIFT_CLUSTER = os.getenv('OPENSHIFT_CLUSTER')
+
 
 def base_openshift_inventory(cluster_hosts):
     '''Set the base openshift inventory.'''
@@ -47,10 +49,11 @@ def base_openshift_inventory(cluster_hosts):
                       if server.metadata['host-type'] == 'lb']
 
     # NOTE: everything that should go to the `[nodes]` group:
-    nodes = list(set(masters + etcd + infra_hosts + app + cns))
+    nodes = list(set(masters + infra_hosts + app + cns))
 
-    # NOTE: all OpenShift nodes, including `[lb]`, `[nfs]`, etc.:
-    osev3 = list(set(nodes + load_balancers))
+    # NOTE: all OpenShift nodes + any "supporting" roles,
+    #       i.e.: `[etcd]`, `[lb]`, `[nfs]`, etc.:
+    osev3 = list(set(nodes + etcd + load_balancers))
 
     inventory['OSEv3'] = {'hosts': osev3, 'vars': {}}
     inventory['openstack_nodes'] = {'hosts': nodes}
@@ -94,13 +97,6 @@ def _get_hostvars(server, docker_storage_mountpoints):
         hostvars['private_v4'] = private_v4
         hostvars['openshift_ip'] = private_v4
 
-        # NOTE(shadower): Yes, we set both hostname and IP to the private
-        # IP address for each node. OpenStack doesn't resolve nodes by
-        # name at all, so using a hostname here would require an internal
-        # DNS which would complicate the setup and potentially introduce
-        # performance issues.
-        hostvars['openshift_hostname'] = server.metadata.get(
-            'openshift_hostname', private_v4)
     hostvars['openshift_public_hostname'] = server.name
 
     if server.metadata['host-type'] == 'cns':
@@ -124,11 +120,12 @@ def build_inventory():
     # Use an environment variable to optionally skip returning the app nodes.
     show_compute_nodes = os.environ.get('OPENSTACK_SHOW_COMPUTE_NODES', 'true').lower() == "true"
 
-    # TODO(shadower): filter the servers based on the `OPENSHIFT_CLUSTER`
-    # environment variable.
+    # If `OPENSHIFT_CLUSTER` env variable is defined then it's used to
+    # filter servers by metadata.clusterid attribute value.
     cluster_hosts = [
         server for server in cloud.list_servers()
-        if 'metadata' in server and 'clusterid' in server.metadata and
+        if 'clusterid' in server.get('metadata', []) and
+        (OPENSHIFT_CLUSTER is None or server.metadata.clusterid == OPENSHIFT_CLUSTER) and
         (show_compute_nodes or server.metadata.get('sub-host-type') != 'app')]
 
     inventory = base_openshift_inventory(cluster_hosts)
@@ -183,7 +180,7 @@ def build_inventory():
 
 def _get_stack_outputs(cloud_client):
     """Returns a dictionary with the stack outputs"""
-    cluster_name = os.getenv('OPENSHIFT_CLUSTER', 'openshift-cluster')
+    cluster_name = OPENSHIFT_CLUSTER or 'openshift-cluster'
 
     stack = cloud_client.get_stack(cluster_name)
     if stack is None or stack['stack_status'] not in (

@@ -63,7 +63,7 @@ their configuration as GlusterFS nodes:
 | Name               | Default value             | Description                             |
 |--------------------|---------------------------|-----------------------------------------|
 | glusterfs_cluster  | 1                         | The ID of the cluster this node should belong to. This is useful when a single heketi service is expected to manage multiple distinct clusters. **NOTE:** For natively-hosted clusters, all pods will be in the same OpenShift namespace
-| glusterfs_hostname | openshift.node.nodename   | A hostname (or IP address) that will be used for internal GlusterFS communication
+| glusterfs_hostname | l_kubelet_node_name  | A hostname (or IP address) that will be used for internal GlusterFS communication
 | glusterfs_ip       | openshift.common.ip       | An IP address that will be used by pods to communicate with the GlusterFS node. **NOTE:** Required for external GlusterFS nodes
 | glusterfs_zone     | 1                         | A zone number for the node. Zones are used within the cluster for determining how to distribute the bricks of GlusterFS volumes. heketi will try to spread each volumes' bricks as evenly as possible across all zones
 
@@ -87,7 +87,7 @@ GlusterFS cluster into a new or existing OpenShift cluster:
 | openshift_storage_glusterfs_block_deploy               | True                    | Deploy glusterblock provisioner service
 | openshift_storage_glusterfs_block_image                | 'gluster/glusterblock-provisioner'| Container image to use for glusterblock-provisioner pod, enterprise default is 'rhgs3/rhgs-gluster-block-prov-rhel7'
 | openshift_storage_glusterfs_block_host_vol_create      | True                    | Automatically create GlusterFS volumes to host glusterblock volumes. **NOTE:** If this is False, block-hosting volumes will need to be manually created before glusterblock volumes can be provisioned
-| openshift_storage_glusterfs_block_host_vol_size        | 100                     | Size, in GB, of GlusterFS volumes that will be automatically create to host glusterblock volumes if not enough space is available for a glusterblock volume create request. **NOTE:** This value is effectively an upper limit on the size of glusterblock volumes unless you manually create larger GlusterFS block-hosting volumes
+| openshift_storage_glusterfs_block_host_vol_size        | 100                     | Size, in GB, of GlusterFS volumes that will be automatically created to host glusterblock volumes if not enough space is available for a glusterblock volume create request. **NOTE:** This value is effectively an upper limit on the size of glusterblock volumes unless you manually create larger GlusterFS block-hosting volumes
 | openshift_storage_glusterfs_block_host_vol_max         | 15                      | Max number of GlusterFS volumes to host glusterblock volumes
 | openshift_storage_glusterfs_block_storageclass         | False                   | Automatically create a StorageClass for each glusterblock cluster
 | openshift_storage_glusterfs_block_storageclass_default | False                   | Sets the glusterblock StorageClass for this group as cluster-wide default

@@ -38,23 +38,16 @@
     src: "recycler_pod.yaml.j2"
     dest: "/etc/origin/master/recycler_pod.yaml"
 
-- name: Create flexvolume directory when on atomic hosts
-  file:
-    state: directory
-    path: "/etc/origin/kubelet-plugins/volume/exec"
-    mode: '0750'
-  when: openshift_is_atomic | bool
-
-- name: Flex volume directory on non-atomic host
+- name: Create flex volume directory on host
   file:
     state: directory
     path: "/usr/libexec/kubernetes/kubelet-plugins/volume/exec/"
     mode: '0750'
-  when: not openshift_is_atomic | bool
 
 - name: Create the policy file if it does not already exist
   command: >
-    {{ openshift_client_binary }} adm create-bootstrap-policy-file
+    {{ openshift_client_binary }} --config={{ openshift.common.config_base }}/master/admin.kubeconfig
+      adm create-bootstrap-policy-file
       --filename={{ openshift_master_policy }}
   args:
     creates: "{{ openshift_master_policy }}"
@@ -87,6 +80,17 @@
   when:
   - openshift.master.openid_ca is defined
   - item.kind == 'OpenIDIdentityProvider'
+  with_items: "{{ openshift_master_identity_providers }}"
+
+- name: Create the GitHub (Enterprise) ca file if needed
+  copy:
+    dest: "/etc/origin/master/{{ item.name }}_github_ca.crt"
+    content: "{{ openshift.master.github_ca }}"
+    mode: 0600
+    backup: yes
+  when:
+  - openshift.master.github_ca is defined
+  - item.kind == 'GitHubIdentityProvider'
   with_items: "{{ openshift_master_identity_providers }}"
 
 - name: Create the request header ca file if needed
@@ -175,7 +179,7 @@
   oc_obj:
     state: list
     kind: pod
-    name: "master-{{ item }}-{{ openshift.node.nodename | lower }}"
+    name: "master-{{ item }}-{{ l_kubelet_node_name | lower }}"
     namespace: kube-system
   register: control_plane_pods
   until:
@@ -227,7 +231,7 @@
   oc_obj:
     state: list
     kind: pod
-    name: "master-{{ item }}-{{ openshift.node.nodename | lower }}"
+    name: "master-{{ item }}-{{ l_kubelet_node_name | lower }}"
     namespace: kube-system
   register: control_plane_health
   until:

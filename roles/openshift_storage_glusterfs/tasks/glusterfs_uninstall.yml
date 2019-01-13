@@ -44,7 +44,7 @@
 
 - name: Unlabel any existing GlusterFS nodes
   oc_label:
-    name: "{{ hostvars[item].openshift.node.nodename }}"
+    name: "{{ hostvars[item].l_kubelet_node_name }}"
     kind: node
     state: absent
     labels: "{{ glusterfs_nodeselector | lib_utils_oo_dict_to_list_of_dict }}"
@@ -140,7 +140,6 @@
   with_items: "{{ glusterfs_nodes | default([]) }}"
   when:
   - not glusterfs_is_native | bool
-  - not openshift_is_atomic | bool
 
 - name: Get GlusterFS storage devices state
   command: "pvdisplay -C --noheadings -o pv_name,vg_name {% for device in hostvars[item].glusterfs_devices %}{{ device }} {% endfor %}"

@@ -1,9 +1,4 @@
 ---
-- name: Fail if Atomic Host since this is an rpm request
-  fail: msg='Cannot use CRI-O as a package on Atomic Host'
-  when:
-    - openshift_is_atomic | bool
-
 - import_tasks: common/pre.yml
 
 - name: Check that overlay is in the kernel
@@ -81,6 +76,11 @@
   template:
     dest: /etc/sysconfig/crio-network
     src: crio-network.j2
+
+- name: Place registries.conf in /etc/containers/registries.conf
+  template:
+    dest: "{{ containers_registries_conf_path }}"
+    src: registries.conf.j2
 
 - name: Start the CRI-O service
   systemd:

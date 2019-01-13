@@ -6,9 +6,6 @@
     - openshift_deployment_type == 'openshift-enterprise'
     - not openshift_use_crio | bool
 
-- name: Start node image prepull
-  import_tasks: prepull.yml
-
 - import_tasks: dnsmasq_install.yml
 - import_tasks: dnsmasq.yml
 
@@ -31,6 +28,9 @@
     name: NetworkManager
     enabled: yes
     state: restarted
+
+- name: Start node image prepull
+  import_tasks: prepull.yml
 
 - name: include node installer
   import_tasks: install.yml
@@ -60,9 +60,6 @@
 - import_tasks: registry_auth.yml
 
 - import_tasks: prepull_check.yml
-
-- import_tasks: copy_image_to_ostree.yml
-  when: openshift_is_atomic | bool
 
 - name: include standard node config
   import_tasks: config.yml

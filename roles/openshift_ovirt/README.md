@@ -2,10 +2,23 @@
 
 OpenShift Provisioned on Red Hat Virtualization and oVirt
 
+The puprpose of the role is to create the VMs, by a recepie, using vars, and generate an inventory. \
+The generated inventory can be merged into and openshift inventory(see examples dir[1]) and to ease the deployment a lot.
+
+- [OpenShift oVirt](#openshift-ovirt)
+  * [Role Tasks](#role-tasks)
+  * [Role Variables](#role-variables)
+  * [Examples](#examples)
+    + [Manifest](#manifest)
+    + [Playbook](#playbook)
+  * [License](#license)
+
 ## Role Tasks
 
-* `build_vm_list.yml`: Creates a list of virtual machine definitions and
+- `main.yaml`: The entrypoint to the role. It invokes the following tasks below.
+- `build_vm_list.yml`: Creates a list of virtual machine definitions and
   affinity groups based on a simple manifest (below)
+- `create_vms.yaml`: consumes the output of the former task and create vms for the nodes of the cluster. It generates an inventory of nodes.
 
 ## Role Variables
 
@@ -26,16 +39,17 @@ Below `nic_mode` we can find this other parameters
 
 | Name            |  Type  | Default value |                                          |
 |-----------------|--------|---------------|------------------------------------------|
-| nic_ip_address  | String | UNDEF         | Static ipaddress for vm interface.       | 
-| nic_netmask     | String | UNDEF         | Static Netmask for vm interface .        | 
-| nic_gateway     | String | UNDEF         | Static Gateway address for vm interface. | 
-| nic_on_boot     | Bool   | True          | The interface will be up on boot.        | 
-| nic_name        | String | 'eth0'        | The Interface name for the vm.           | 
-| dns_servers     | String | UNDEF         | The DNS set on the VM.                   | 
+| nic_ip_address  | String | UNDEF         | Static ipaddress for vm interface.       |
+| nic_netmask     | String | UNDEF         | Static Netmask for vm interface .        |
+| nic_gateway     | String | UNDEF         | Static Gateway address for vm interface. |
+| nic_on_boot     | Bool   | True          | The interface will be up on boot.        |
+| nic_name        | String | 'eth0'        | The Interface name for the vm.           |
+| dns_servers     | String | UNDEF         | The DNS set on the VM.                   |
 
 
 ## Examples
 
+### Manifest
 - **openshift_ovirt_vm_profile**
 
 ```
@@ -141,15 +155,14 @@ openshift_ovirt_vm_manifest:
   count: 1
   profile: 'node_vm'
   nic_mode:
-      lb0:
+      lb:
         nic_ip_address: '192.168.123.170'
         nic_netmask: '255.255.255.0'
         nic_gateway: '192.168.123.1'
         dns_servers: "192.168.1.100"
 ```
 
-Example Playbook
-----------------
+### Playbook
 
 ```
 ---
@@ -168,14 +181,9 @@ Example Playbook
         insecure: "{{ engine_insecure | default(true) }}"
       tags:
         - always
-    - name: Build virtual machine facts
-      import_role:
-        name: openshift_ovirt
-        tasks_from: build_vm_list.yml
 
   roles:
-    - oVirt.image-template
-    - oVirt.vm-infra
+    - openshift_ovirt
 
   post_tasks:
     - name: Logout from oVirt
@@ -185,6 +193,8 @@ Example Playbook
       tags:
         - always
 ```
+
+**Side Note:** Regarding the behaviour, of the iterations, If we have a `count: 1` in our vm definition, the name that you put in the proper field will be preserved, but if we have more than 1 a counter will be raised and the vm name will be `name + iteration` (EG) _node0_, _node1_, _node2_ in case of `count: 3`
 
 License
 -------
